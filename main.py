@@ -30,13 +30,26 @@ class Cloud:
 
 
 def main():
-    global game_speed, x_pos_bg, y_pos_bg
+    global game_speed, x_pos_bg, y_pos_bg, point
     run = True
     clock = pygame.time.Clock()
     player = Dinosaur()
     cloud = Cloud()
     game_speed = 14
     x_pos_bg, y_pos_bg = 0, 380
+    point = 0
+    font = pygame.font.Font("freesansbold.ttf", 20)
+
+    def score():
+        global point, game_speed
+        point += 1
+        if point % 100 == 0:
+            game_speed += 1
+
+        text = font.render("Point: " + str(point), True, (0, 0, 0))
+        textRect = text.get_rect()
+        textRect.center = (1000, 40)
+        SCREEN.blit(text, textRect)
 
     def background():
         global x_pos_bg, y_pos_bg
@@ -63,6 +76,8 @@ def main():
 
         cloud.draw(SCREEN)
         cloud.update()
+
+        score()
 
         clock.tick(30)
         pygame.display.update()
