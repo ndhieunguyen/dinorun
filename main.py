@@ -10,6 +10,7 @@ SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
 
 class Cloud:
@@ -84,6 +85,7 @@ def main():
     point = 0
     font = pygame.font.Font("freesansbold.ttf", 20)
     obstacles = []
+    death_count = 0
 
     def score():
         global point, game_speed
@@ -129,7 +131,9 @@ def main():
             obstacle.draw(SCREEN)
             obstacle.update()
             if player.dino_rect.colliderect(obstacle.rect):
-                pygame.draw.rect(SCREEN, (255, 0, 0), player.dino_rect, 2)
+                pygame.time.delay(2000)
+                death_count += 1
+                menu(death_count)
 
         background()
 
@@ -142,5 +146,32 @@ def main():
         pygame.display.update()
 
 
+def menu(death_count):
+    global point
+    run = True
+    while run:
+        SCREEN.fill(WHITE)
+        font = pygame.font.Font("freesansbold.ttf", 30)
+        if death_count == 0:
+            text = font.render("Press any key to start", True, BLACK)
+        elif death_count >= 0:
+            text = font.render("Press any key to restart", True, BLACK)
+            score = font.render(f"Your score: {point}", True, BLACK)
+            score_rect = score.get_rect()
+            score_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)
+            SCREEN.blit(score, score_rect)
+
+        text_rect = text.get_rect()
+        text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        SCREEN.blit(text, text_rect)
+        SCREEN.blit(RUNNING[0], (SCREEN_WIDTH // 2 - 20, SCREEN_HEIGHT // 2 - 140))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                main()
+
+
 if __name__ == "__main__":
-    main()
+    menu(death_count=0)
